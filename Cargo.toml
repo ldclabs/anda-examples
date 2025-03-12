@@ -1,0 +1,23 @@
+[workspace]
+resolver = "2"
+members = ["icp_ledger_agent"]
+
+[workspace.package]
+description = "Examples of Anda AI agents"
+repository = "https://github.com/ldclabs/anda-examples"
+homepage = "https://github.com/ldclabs/anda-examples"
+keywords = ["ai-agent", "icp", "tee"]
+categories = [
+  "accessibility",
+  "web-programming",
+  "development-tools",
+  "text-processing",
+]
+edition = "2024"
+license = "MIT"
+
+[profile.release]
+debug = false
+lto = true
+strip = true
+opt-level = 's'
