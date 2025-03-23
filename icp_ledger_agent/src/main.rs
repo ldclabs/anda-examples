@@ -3,13 +3,12 @@ use anda_engine::{
     context::Web3SDK,
     engine::EngineBuilder,
     model::{Model, openai, xai},
-    store::Store,
+    store::{InMemory, Store},
 };
 use anda_engine_server::{ServerBuilder, shutdown_signal};
 use anda_icp::ledger::BalanceOfTool;
 use anda_web3_client::client::{Client as Web3Client, load_identity};
 use clap::Parser;
-use object_store::memory::InMemory;
 use std::{collections::BTreeMap, sync::Arc, time::Duration};
 use structured_logger::{Builder, async_json::new_writer, get_env_level};
 use tokio_util::sync::CancellationToken;
@@ -112,6 +111,7 @@ async fn main() -> Result<(), BoxError> {
         .try_into()
         .map_err(|_| format!("invalid root_secret: {:?}", cli.root_secret))?;
 
+    // Initialize Web3 client for ICP network interaction
     let web3 = Web3Client::builder()
         .with_ic_host(&cli.ic_host)
         .with_identity(Arc::new(identity))
@@ -153,7 +153,7 @@ async fn main() -> Result<(), BoxError> {
     // Build agent engine with all configured components
     let engine = EngineBuilder::new()
         .with_id(my_principal)
-        .with_name(APP_NAME.to_string())
+        .with_name(APP_NAME.to_string())?
         .with_cancellation_token(global_cancel_token.clone())
         .with_web3_client(Arc::new(Web3SDK::from_web3(Arc::new(web3.clone()))))
         .with_model(model)
